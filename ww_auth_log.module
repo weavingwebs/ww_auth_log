@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Logs user messages to a file.
+ * 
+ * Based on syslog module
+*/
+
+/**
+* Implements hook_watchdog().
+**/
+function ww_auth_log_watchdog(array $log_entry) {
+  // ignore non user messages
+  if ($log_entry['type'] !== 'user') {
+    return;
+  }
+
+  global $base_url;
+
+  // format message
+  $message = strtr('!date !host !base_url|!timestamp|!type|!ip|!request_uri|!referer|!uid|!link|!message', array(
+    '!date' => date('M  j H:i:s', $log_entry['timestamp']),
+    '!host' => gethostname(),
+    '!base_url'    => $base_url,
+    '!timestamp'   => $log_entry['timestamp'],
+    '!type'        => $log_entry['type'],
+    '!ip'          => $log_entry['ip'],
+    '!request_uri' => $log_entry['request_uri'],
+    '!referer'     => $log_entry['referer'],
+    '!uid'         => $log_entry['uid'],
+    '!link'        => strip_tags($log_entry['link']),
+    '!message'     => strip_tags(!isset($log_entry['variables']) ? $log_entry['message'] : strtr($log_entry['message'], $log_entry['variables'])),
+  ));
+
+  // write to drupal_auth.log
+  error_log($message."\n", 3, DRUPAL_ROOT.'/../logs/drupal_auth.log');
+}
