@@ -3,7 +3,7 @@
 /**
  * @file
  * Logs user messages to a file.
- * 
+ *
  * Based on syslog module
 */
 
@@ -20,7 +20,7 @@ function ww_auth_log_watchdog(array $log_entry) {
 
   // format message
   $message = strtr('!date !host !base_url|!timestamp|!type|!ip|!request_uri|!referer|!uid|!link|!message', array(
-    '!date' => date('M  j H:i:s', $log_entry['timestamp']),
+    '!date' => date('M j H:i:s', $log_entry['timestamp']),
     '!host' => gethostname(),
     '!base_url'    => $base_url,
     '!timestamp'   => $log_entry['timestamp'],
