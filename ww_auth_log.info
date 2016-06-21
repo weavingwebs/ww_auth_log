@@ -2,5 +2,4 @@ name = WW Auth Log
 desctription = Logs user messages to a file
 package = __ww__
 core = 7.x
-version = 7.x-0.1
-
+version = 7.x-0.2
