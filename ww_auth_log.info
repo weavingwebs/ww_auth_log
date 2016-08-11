@@ -2,7 +2,7 @@ name = WW Auth Log
 desctription = Logs user messages to a file
 package = __ww__
 core = 7.x
-version = 7.x-0.3
+version = 7.x-0.4
 
 testing_api = 2.x
 files[] = ww_auth_log.test
