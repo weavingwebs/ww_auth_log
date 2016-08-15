@@ -33,9 +33,19 @@ class WWAuthLogger implements LoggerInterface {
     $message_placeholders = $this->parser->parseMessagePlaceholders($message, $context);
     $message = empty($message_placeholders) ? $message : strtr($message, $message_placeholders);
 
+    // format date NOTE: it is important to use the system timezone in order for
+    // fail2ban to correctly pick up the log messages (we have to assume it is
+    // set correctly in php.ini)
+    $date = \Drupal::service('date.formatter')->format(
+      $context['timestamp'],
+      'custom',
+      'M j H:i:s Y',
+      ini_get('date.timezone')
+    );
+
     // format message
     $message = strtr('!date !host !base_url|!timestamp|!type|!ip|!request_uri|!referer|!uid|!link|!message', array(
-      '!date' => date('M j H:i:s Y', $context['timestamp']),
+      '!date' => $date,
       '!host' => gethostname(),
       '!base_url'    => $base_url,
       '!timestamp'   => $context['timestamp'],
