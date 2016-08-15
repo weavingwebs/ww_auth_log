@@ -1,0 +1,6 @@
+name: WW Auth Log
+type: module
+description: Log user events to ../logs/drupal_auth.log to be read by fail2ban
+core: 8.x
+package: __ww__
+version: 8.x-0.1
