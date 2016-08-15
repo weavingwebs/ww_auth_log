@@ -1,0 +1,6 @@
+services:
+  logger.ww_auth_logger:
+    class: Drupal\ww_auth_log\Logger\WWAuthLogger
+    arguments: ['@logger.log_message_parser']
+    tags:
+      - { name: logger }
