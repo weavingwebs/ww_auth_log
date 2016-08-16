@@ -1,11 +1,17 @@
 <?php
 
+namespace Drupal\ww_auth_log\Tests;
+
+use Drupal\simpletest\WebTestBase;
+
 /**
 * Run the WWAuthLogTestCase multiple times to trigger fail2ban without having to
 * run the test several times and incur the long setup time for each.
 *
 * NOTE: a network interface must exist for 1.2.3.4 i.e.
 *       'sudo ifconfig eth0:123 1.2.3.4'
+*
+* @group __ww__
 **/
 class WWAuthLogFail2BanTestCase extends WWAuthLogTestCase {
 
@@ -14,26 +20,6 @@ class WWAuthLogFail2BanTestCase extends WWAuthLogTestCase {
   * @var string
   **/
   const IP_ADDR = '1.2.3.4';
-
-  /**
-  * Test Case metadata
-  */
-  public static function getInfo() {
-    return array(
-      'name' => 'WW Auth log - Fail2ban Test',
-      'description' => 'Do multiple failed logins to trigger fail2ban',
-      'group' => '__ww__',
-    );
-  }
-
-  public function setUp() {
-    $this->unblockIP();
-    parent::setUp();
-  }
-
-  public function tearDown() {
-    $this->unblockIP();
-  }
 
   /**
   * Trigger multiple failed login tests.
@@ -52,12 +38,5 @@ class WWAuthLogFail2BanTestCase extends WWAuthLogTestCase {
     // spoof ip address
     $curl_options[CURLOPT_INTERFACE] = self::IP_ADDR;
     parent::curlExec($curl_options, $redirect);
-  }
-
-  /**
-  * Make sure the IP isn't blocked by drupal
-  **/
-  protected function unblockIP() {
-    db_query("DELETE FROM blocked_ips WHERE ip = '". self::IP_ADDR ."';");
   }
 }
