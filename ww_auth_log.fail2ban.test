@@ -1,19 +1,14 @@
 <?php
 
 /**
-* Run the WWAuthLogTestCase multiple times to trigger fail2ban without having to
-* run the test several times and incur the long setup time for each.
-*
-* NOTE: a network interface must exist for 1.2.3.4 i.e.
-*       'sudo ifconfig eth0:123 1.2.3.4'
-**/
+ * Functionally test ww_auth_log by attempting 5 failed logins using a pseudo ip
+ * and checking that fail2ban bans it. Overrides the normal test to avoid having
+ * to run the test several times and incur the long setup time for each.
+ *
+ * NOTE: F2BTEST_IP, F2BTEST_HTTPIP & F2BTEST_DOMAIN env vars must be set to use
+ *       a pseudo IP address and avoid banning the site from itself.
+ */
 class WWAuthLogFail2BanTestCase extends WWAuthLogTestCase {
-
-  /**
-  * IP to use for curl requests.
-  * @var string
-  **/
-  const IP_ADDR = '1.2.3.4';
 
   /**
   * Test Case metadata
@@ -50,14 +45,73 @@ class WWAuthLogFail2BanTestCase extends WWAuthLogTestCase {
   **/
   protected function curlExec($curl_options, $redirect = FALSE) {
     // spoof ip address
-    $curl_options[CURLOPT_INTERFACE] = self::IP_ADDR;
+    $curl_options[CURLOPT_INTERFACE] = $this->getIP();
+    $curl_options[CURLOPT_RESOLVE] = array(
+      implode(':', [
+        $this->getHostname(),
+        80,
+        $this->getHTTPIP(),
+      ]),
+      'wwdb2:3306:' . $this->getWWDBIP(),
+    );
+
+    // make sure sites that redirect (i.e. port 80 -> 443) still work
+    $curl_options[CURLOPT_FOLLOWLOCATION] = true;
+
+    // make sure it doesn't run forever if something is broken
+    $curl_options[CURLOPT_TIMEOUT] = 10;
+
     parent::curlExec($curl_options, $redirect);
+  }
+
+  /**
+   * Get the IP address of the site container on the test network.
+   */
+  protected function getIP() {
+    $value = getenv('F2BTEST_IP');
+    if (!$value) {
+      throw new \InvalidArgumentException('F2BTEST_IP is not defined');
+    }
+    return $value;
+  }
+
+  /**
+   * Get the IP address of the httpd container on the test network.
+   */
+  protected function getHTTPIP() {
+    $value = getenv('F2BTEST_HTTPIP');
+    if (!$value) {
+      throw new \InvalidArgumentException('F2BTEST_HTTPIP is not defined');
+    }
+    return $value;
+  }
+
+  /**
+   * Get the IP address of the httpd container on the test network.
+   */
+  protected function getWWDBIP() {
+    $value = getenv('F2BTEST_WWDBIP');
+    if (!$value) {
+      throw new \InvalidArgumentException('F2BTEST_WWDBIP is not defined');
+    }
+    return $value;
+  }
+
+  /**
+   * Get the hostname of the httpd container on the test network.
+   */
+  protected function getHostname() {
+    $value = getenv('F2BTEST_DOMAIN');
+    if (!$value) {
+      throw new \InvalidArgumentException('F2BTEST_DOMAIN is not defined');
+    }
+    return $value;
   }
 
   /**
   * Make sure the IP isn't blocked by drupal
   **/
   protected function unblockIP() {
-    db_query("DELETE FROM blocked_ips WHERE ip = '". self::IP_ADDR ."';");
+    db_query("DELETE FROM blocked_ips WHERE ip = '". $this->getIP() ."';");
   }
 }
