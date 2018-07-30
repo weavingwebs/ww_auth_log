@@ -1,0 +1,13 @@
+{
+  "name": "drupal/ww_auth_log",
+  "type": "drupal-module",
+  "description": "Logs user messages to a file",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://git.weavingwebs.co.uk/modules/ww_auth_log/",
+  "minimum-stability": "dev",
+  "support": {
+      "issues": "https://git.weavingwebs.co.uk/modules/ww_auth_log/issues",
+      "source": "https://git.weavingwebs.co.uk/modules/ww_auth_log/tree/8.x"
+  },
+}
