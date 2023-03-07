@@ -21,7 +21,7 @@ class WWAuthLogger implements LoggerInterface {
   /**
    * {@inheritdoc}
    */
-  public function log($level, string|\Stringable $message, array $context = array()) {
+  public function log($level, string|\Stringable $message, array $context = array()): void {
     // ignore non user messages
     if ($context['channel'] !== 'user') {
       return;
