@@ -3,5 +3,5 @@ type: module
 description: Log user events to ../logs/drupal_auth.log to be read by fail2ban
 core: 8.x
 package: __ww__
-version: 8.x-0.1
-core_version_requirement: ^8 || ^9
+version: 1.0.0
+core_version_requirement: ^10
