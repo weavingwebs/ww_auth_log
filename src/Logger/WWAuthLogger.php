@@ -8,6 +8,8 @@ use Psr\Log\LoggerInterface;
 class WWAuthLogger implements LoggerInterface {
   use RfcLoggerTrait;
 
+  protected LogMessageParserInterface $parser;
+
   /**
    * Constructs a WWAuthLogger object.
    *
